@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>RealWorld-X: نموذج أولي</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#e7edef;--surface:#fbfdfd;--ink:#12303a;--ink2:#4d6872;--line:#cdd9dc;
+  --board:#12303a;--board2:#1b4250;--board-ink:#eaf3f3;--board-dim:#9fbcc4;
+  --plate:#f2b705;--plate-ink:#2a1f00;--up:#c2381f;--down:#1a7a50;--bup:#ff9a7e;--bdown:#62d6a2;
+  --btn:#12303a;--btn-ink:#ffffff;--warn:#fff1c9;--warnink:#5a4300;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#0a171c;--surface:#12262d;--ink:#e4eff0;--ink2:#97b1b8;--line:#223b43;
+    --board:#071418;--board2:#0e2229;--btn:#f2b705;--btn-ink:#2a1f00;
+    --up:#ff8a6b;--down:#5fd4a0;--warn:#3a3012;--warnink:#f5dd9a;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0a171c;--surface:#12262d;--ink:#e4eff0;--ink2:#97b1b8;--line:#223b43;
+  --board:#071418;--board2:#0e2229;--btn:#f2b705;--btn-ink:#2a1f00;
+  --up:#ff8a6b;--down:#5fd4a0;--warn:#3a3012;--warnink:#f5dd9a;
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.6 "IBM Plex Sans Arabic",Tahoma,Arial,sans-serif;-webkit-text-size-adjust:100%}
+button{font-family:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
+button:focus-visible{outline:3px solid var(--plate);outline-offset:2px}
+.wrap{max-width:520px;margin:0 auto}
+.num{direction:ltr;unicode-bidi:isolate;display:inline-block;font-variant-numeric:tabular-nums}
+
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:10;background:var(--board);color:var(--board-ink)}
+header .top{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 16px 10px}
+.cash small{display:block;color:var(--board-dim);font-size:12px;line-height:1.3}
+.cash b{font-size:26px;color:var(--plate);font-weight:700;line-height:1.15}
+.cash b.neg{color:var(--bup)}
+.clock{text-align:center;font-size:12px;color:var(--board-dim);line-height:1.35}
+.clock b{display:block;color:var(--board-ink);font-size:18px}
+.speed{display:flex;background:var(--board2);border-radius:10px;padding:3px;gap:2px}
+.speed button{border:0;background:none;color:var(--board-dim);font-size:12px;padding:6px 7px;border-radius:8px;min-height:34px}
+.speed button.on{background:var(--plate);color:var(--plate-ink);font-weight:600}
+.news{background:var(--board2);font-size:13px;padding:7px 16px;color:var(--board-ink)}
+.news .wrap{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+main{padding:14px 14px 100px}
+.picking header,.picking nav{display:none}
+h2{font-size:19px;margin:6px 2px 2px}
+.sub{color:var(--ink2);font-size:13px;margin:0 2px 12px}
+
+.board{background:var(--board);border-radius:18px;padding:4px 14px;color:var(--board-ink);margin-bottom:12px}
+.brow{display:grid;grid-template-columns:1fr 84px 82px;align-items:center;gap:10px;width:100%;background:none;border:0;border-bottom:1px solid rgba(255,255,255,.1);color:inherit;padding:11px 0;text-align:right;min-height:60px}
+.brow:last-child{border-bottom:0}
+.bname b{display:block;font-size:16px;font-weight:600}
+.bname small{color:var(--board-dim);font-size:12px}
+.spark{width:84px;height:28px}
+.spark.up{color:var(--bup)}.spark.down{color:var(--bdown)}.spark.flat{color:var(--board-dim)}
+.pcol{text-align:center}
+.plate{background:var(--plate);color:var(--plate-ink);border-radius:10px;padding:4px 6px 3px}
+.plate b{font-size:19px;line-height:1.25}
+.chg{display:block;font-size:12px;margin-top:3px}
+.chg.up{color:var(--bup)}.chg.down{color:var(--bdown)}.chg.flat{color:var(--board-dim)}
+
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:12px}
+.card.off{opacity:.6}
+.row{display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:7px 0;border-bottom:1px dashed var(--line)}
+.row:last-child{border-bottom:0}
+.row span:first-child{color:var(--ink2)}
+.pos{color:var(--down)}.neg{color:var(--up)}
+.bar{height:8px;background:var(--line);border-radius:6px;overflow:hidden;margin:6px 0}
+.bar i{display:block;height:100%;background:var(--down);border-radius:6px}
+.warn{background:var(--warn);color:var(--warnink);border-radius:10px;padding:9px 12px;font-size:13px;margin:10px 0 2px}
+.mhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.mhead b{font-size:17px}
+.chip{border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:20px;padding:5px 12px;font-size:12px;min-height:32px}
+.lbl{font-size:13px;color:var(--ink2);margin-top:8px}
+
+.btn{background:var(--btn);color:var(--btn-ink);border:0;border-radius:10px;font-weight:600;font-size:15px;padding:11px 14px;min-height:46px;width:100%}
+.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+
+.stepper{display:flex;align-items:center;justify-content:space-between;gap:6px;margin:6px 0 8px}
+.stepper button{min-width:44px;height:44px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font-size:15px;padding:0 6px}
+.stepper output{font-size:22px;font-weight:700;flex:1;text-align:center}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 4px}
+
+.sheet{position:fixed;inset:0;background:rgba(5,15,18,.55);display:none;align-items:flex-end;z-index:30}
+.sheet.open{display:flex}
+.sheet-body{background:var(--surface);width:100%;max-width:520px;margin:0 auto;border-radius:20px 20px 0 0;padding:16px 16px calc(18px + env(safe-area-inset-bottom,0px));max-height:90%;overflow-y:auto}
+.shead{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.shead b{font-size:19px}
+.hint{font-size:12px;color:var(--ink2);margin:8px 0 0}
+
+nav{position:fixed;bottom:0;inset-inline:0;z-index:20;background:var(--surface);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px)}
+nav .wrap{display:grid;grid-template-columns:repeat(6,1fr)}
+nav button{border:0;background:none;color:var(--ink2);font-size:12px;padding:12px 2px;min-height:54px;position:relative}
+nav button.on{color:var(--ink);font-weight:700}
+nav button.on::after{content:"";position:absolute;top:0;left:22%;right:22%;height:3px;background:var(--plate);border-radius:0 0 3px 3px}
+
+.scroll{overflow-x:auto}
+.tbl{width:100%;border-collapse:collapse;font-size:13px}
+.tbl th,.tbl td{padding:8px 5px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap}
+.tbl th{color:var(--ink2);font-weight:600}
+.formula{background:var(--bg);border-radius:10px;padding:10px 12px;font-size:13px;color:var(--ink2);margin:6px 0 10px}
+
+#toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(76px + env(safe-area-inset-bottom,0px));background:var(--board);color:var(--board-ink);padding:10px 16px;border-radius:12px;font-size:14px;z-index:40;max-width:90%;text-align:center;display:none;box-shadow:0 4px 18px rgba(0,0,0,.25)}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap top">
+    <div class="cash"><small>الرصيد</small><b id="cash"></b></div>
+    <div class="clock"><span id="day"></span><b id="hr"></b><span id="open"></span></div>
+    <div class="speed" role="group" aria-label="سرعة الوقت">
+      <button data-act="speed" data-v="0" id="sp0">إيقاف</button>
+      <button data-act="speed" data-v="1" id="sp1">عادي</button>
+      <button data-act="speed" data-v="2" id="sp2">سريع</button>
+      <button data-act="speed" data-v="3" id="sp3">واقعي</button>
+    </div>
+  </div>
+  <div class="news"><div class="wrap" id="news"></div></div>
+</header>
+
+<main><div class="wrap" id="view"></div></main>
+
+<nav><div class="wrap">
+  <button data-act="tab" data-tab="market" id="t-market">السوق</button>
+  <button data-act="tab" data-tab="inv" id="t-inv">المخزن</button>
+  <button data-act="tab" data-tab="rest" id="t-rest">المطعم</button>
+  <button data-act="tab" data-tab="city" id="t-city">المدينة</button>
+  <button data-act="tab" data-tab="ledger" id="t-ledger">الدفتر</button>
+  <button data-act="tab" data-tab="fin" id="t-fin">الالتزامات</button>
+</div></nav>
+
+<div class="sheet" id="sheet"><div class="sheet-body" id="sheetBody"></div></div>
+<div id="toast" role="status"></div>
+
+<script>
+/* ============ بيانات اللعبة ============ */
+const GOODS=[
+  {id:'chicken',name:'دجاج',unit:'كجم',base:110,D:130,hh:80,cover:2,vol:.03,spoil:.04,step:5},
+  {id:'beef',name:'لحم بقري',unit:'كجم',base:380,D:40,hh:24,cover:3,vol:.035,spoil:.04,step:2},
+  {id:'bread',name:'خبز صاج',unit:'قطعة',base:3,D:1950,hh:1600,cover:1,vol:.02,spoil:.06,step:50},
+  {id:'tomato',name:'طماطم',unit:'كجم',base:28,D:105,hh:96,cover:2,vol:.06,spoil:.05,step:5},
+  {id:'sauce',name:'ثومية',unit:'كجم',base:90,D:9,hh:4,cover:5,vol:.02,spoil:.03,step:1},
+  {id:'potato',name:'بطاطس',unit:'كجم',base:24,D:140,hh:96,cover:6,vol:.04,spoil:.01,step:5},
+  {id:'oil',name:'زيت',unit:'لتر',base:65,D:22,hh:16,cover:10,vol:.025,spoil:0,step:2}
+];
+const GM=Object.fromEntries(GOODS.map(g=>[g.id,g]));
+const TIERS={
+  urban:{n:'حضر بالكامل',idx:1.15},
+  mixed:{n:'ريف وحضر',idx:1},
+  rural:{n:'ريف غالب',idx:.88},
+  frontier:{n:'حدودية وساحلية',idx:1}
+};
+const GOVS=[
+  {id:'cairo',name:'القاهرة',pop:10.5,tier:'urban'},{id:'giza',name:'الجيزة',pop:9.9,tier:'mixed'},
+  {id:'sharqia',name:'الشرقية',pop:8.2,tier:'mixed'},{id:'dakahlia',name:'الدقهلية',pop:7.3,tier:'mixed'},
+  {id:'beheira',name:'البحيرة',pop:7.2,tier:'mixed'},{id:'minya',name:'المنيا',pop:6.7,tier:'rural'},
+  {id:'qalyubia',name:'القليوبية',pop:6.3,tier:'mixed'},{id:'sohag',name:'سوهاج',pop:6.1,tier:'rural'},
+  {id:'alex',name:'الإسكندرية',pop:5.7,tier:'urban'},{id:'gharbia',name:'الغربية',pop:5.6,tier:'mixed'},
+  {id:'assiut',name:'أسيوط',pop:5.3,tier:'rural'},{id:'menoufia',name:'المنوفية',pop:4.9,tier:'mixed'},
+  {id:'fayoum',name:'الفيوم',pop:4.3,tier:'rural'},{id:'kafr',name:'كفر الشيخ',pop:3.8,tier:'mixed'},
+  {id:'qena',name:'قنا',pop:3.8,tier:'rural'},{id:'beni',name:'بني سويف',pop:3.8,tier:'rural'},
+  {id:'aswan',name:'أسوان',pop:1.7,tier:'rural'},{id:'damietta',name:'دمياط',pop:1.7,tier:'mixed'},
+  {id:'ismailia',name:'الإسماعيلية',pop:1.5,tier:'mixed'},{id:'luxor',name:'الأقصر',pop:1.5,tier:'rural'},
+  {id:'suez',name:'السويس',pop:.8164,tier:'urban'},{id:'portsaid',name:'بورسعيد',pop:.8054,tier:'urban'},
+  {id:'matrouh',name:'مطروح',pop:.6032,tier:'frontier'},{id:'nsinai',name:'شمال سيناء',pop:.4796,tier:'frontier'},
+  {id:'redsea',name:'البحر الأحمر',pop:.4208,tier:'frontier'},{id:'newvalley',name:'الوادي الجديد',pop:.2774,tier:'frontier'},
+  {id:'ssinai',name:'جنوب سيناء',pop:.1204,tier:'frontier'}
+];
+const IMPORT_SHARE={chicken:.35,beef:.4,oil:.6,bread:.5,sauce:.3,tomato:.1,potato:.1};
+const PRODUCERS=[
+  {g:'chicken',name:'مزارع الدواجن',W:14,wage:220},
+  {g:'beef',name:'مزارع الأبقار والمجزر',W:10,wage:260},
+  {g:'bread',name:'مخبز الفرن الكبير',W:16,wage:200},
+  {g:'tomato',name:'مزارع الخضار',W:12,wage:180},
+  {g:'potato',name:'مزارع البطاطس',W:8,wage:180},
+  {g:'oil',name:'معصرة الزيوت',W:5,wage:230},
+  {g:'sauce',name:'مصنع الصلصات',W:4,wage:230}
+];
+const MENU=[
+  {id:'shw_ch',name:'شاورما دجاج',ref:40,pop:1.0,rec:{chicken:.15,bread:1,tomato:.03,sauce:.02}},
+  {id:'shw_be',name:'شاورما لحم',ref:85,pop:.6,rec:{beef:.15,bread:1,tomato:.03,sauce:.02}},
+  {id:'fries',name:'بطاطس مقلية',ref:20,pop:.7,rec:{potato:.25,oil:.05}},
+  {id:'meal',name:'وجبة دجاج',ref:75,pop:.5,rec:{chicken:.3,potato:.2,bread:1}}
+];
+const EVENTS=[
+  {t:'موسم الطماطم: إنتاج وفير والأسعار تنخفض',fx:{tomato:{ss:.5}}},
+  {t:'موجة حر تضرب المزارع والخضار يغلو',fx:{tomato:{ss:-.4},potato:{ss:-.25}}},
+  {t:'أزمة وقود ترفع تكاليف النقل والإنتاج',cost:.15,fx:{chicken:{ss:-.25},beef:{ss:-.2},potato:{ss:-.15}}},
+  {t:'مرض في مزارع الدواجن يقلّل المعروض',fx:{chicken:{ss:-.45}}},
+  {t:'وصول شحنة لحوم مستوردة',fx:{beef:{ss:.45}}},
+  {t:'إقبال كبير على الوجبات السريعة في المدينة',fx:{chicken:{ds:.35},bread:{ds:.3},potato:{ds:.3}}},
+  {t:'مصنع زيوت جديد يبدأ الإنتاج',fx:{oil:{ss:.4}}},
+  {t:'إضراب في مخابز المنطقة',fx:{bread:{ss:-.4}}},
+  {t:'إجازة رسمية: الشوارع مزدحمة والزبائن أكثر',cust:.35,dur:24},
+  {t:'زيادة في رواتب الموظفين تنعش القوة الشرائية',wage:.08},
+  {t:'تسريحات في المصانع تضغط على دخل الناس',wage:-.1},
+  {t:'البنك المركزي يرفع سعر الفائدة',rate:.002},
+  {t:'البنك المركزي يخفض سعر الفائدة',rate:-.002}
+];
+const PROFILE=[0,0,0,0,0,0,0,0,0,0,.4,.7,1.1,1.6,1.5,.8,.6,.8,1.1,1.5,1.8,1.7,1.2,.7];
+const POP_N=800,OUT_RATE=.7,HOME_W=.8,WAGE_SHARE=.5;
+const OP_FEE=1200,OP_DAYS=30,HC_FEE=500,HC_DAYS=14,HC_FINE=800,MAX_CONTRACTS=4,LOAN_AMOUNTS=[2000,5000,10000],LOAN_FEE=.01;
+const JOBS=[{n:'عمال',inc:260,p:.4},{n:'موظفون',inc:420,p:.3},{n:'مهنيون',inc:850,p:.1},{n:'متقاعدون',inc:180,p:.1},{n:'بلا عمل',inc:60,p:.1}];
+const RENT=700, COOK_SAL=150, HIRE_COST=800, TAX=.10, START_CASH=5000, SPREAD=.02, SELL_CUT=.08;
+const TICK_MS=[0,4000,1000,3600000], OFFLINE_TICK_MS=60000, OFFLINE_CAP=72, KEY='rwx.proto.v6';
+
+/* ============ أدوات ============ */
+const $=s=>document.querySelector(s);
+const calcTax=p=>p<=0?0:Math.min(p,1500)*TAX+Math.max(0,p-1500)*.2;
+const rnd=Math.random;
+const gauss=()=>{let u=0,v=0;while(!u)u=rnd();while(!v)v=rnd();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v)};
+const clamp=(x,a,b)=>Math.min(b,Math.max(a,x));
+const fmt=n=>Math.round(n).toLocaleString('en-US');
+const money=n=>Math.abs(n)<10?n.toFixed(2):fmt(n);
+const N=v=>'<span class="num">'+v+'</span>';
+const pad=n=>String(n).padStart(2,'0');
+const r1=n=>Math.round(n*10)/10;
+const sgn=n=>(n>=0?'+':'−')+fmt(Math.abs(n));
+
+/* ============ الحالة ============ */
+const blankDay=()=>({rev:0,mat:0,spoil:0,ops:0,sal:0,tax:0,fin:0,lic:0,served:0,city:0,mPrice:0,mStock:0,mCap:0,stock:{}});
+function newState(govId){
+  const gov=GOVS.find(x=>x.id===govId)||GOVS[0],gidx=TIERS[gov.tier].idx,pl=1+(gidx-1)*.6;
+  const market={},menu={},inv={};
+  GOODS.forEach(g=>{market[g.id]={price:g.base,ss:0,ds:0,stock:g.cover*g.D,hist:[g.base]};inv[g.id]={qty:0,avg:g.base}});
+  MENU.forEach(m=>{menu[m.id]={price:Math.round(m.ref*pl),on:true}});
+  const pop=[];
+  for(let i=0;i<POP_N;i++){
+    let r=rnd(),ji=JOBS.length-1;
+    for(let k=0;k<JOBS.length;k++){r-=JOBS[k].p;if(r<=0){ji=k;break}}
+    const inc=Math.round(JOBS[ji].inc*gidx*(.8+rnd()*.4));
+    pop.push({j:ji,i:inc,w:Math.round(inc*WAGE_SHARE*(.5+rnd())*10)/10});
+  }
+  const comps=[{name:'مطعم الأصيل',q:3.2,base:.95},{name:'شاورما السلطان',q:2.8,base:1.05},{name:'بيت الوجبات',q:3.5,base:1}].map(c=>({name:c.name,q:c.q,base:c.base,off:c.base,sold:0}));
+  const first=pop.find(r=>r.j===4);first.emp=1;first.i=COOK_SAL;
+  const prods=PRODUCERS.map(P=>({g:P.g,name:P.name,W:P.W,wage:P.wage,cap:GM[P.g].D,cost:GM[P.g].base/1.3,staff:0,out:0,last:0}));
+  prods.forEach((P,idx)=>{
+    let need=P.W;
+    for(const r of pop){if(!need)break;if(r.j===0&&!r.emp){r.emp=2;r.p=idx;r.i=P.wage;need--;P.staff++}}
+  });
+  const s={v:6,gov:gov.id,pl,startDow:new Date().getDay(),world:null,applied:[],tick:9,cash:START_CASH,market,menu,inv,pop,prods,costIdx:1,comps,wage:1,salary:COOK_SAL,cooks:1,loans:[],contracts:[],rateAdj:0,nextId:1,lic:{op:9+OP_DAYS*24,hc:9+HC_DAYS*24},rep:3,comp:1,boost:{v:0,left:0},news:[],today:blankDay(),days:[],speed:0,savedAt:Date.now()};
+  S=s;for(let i=0;i<40;i++)marketTick(true);
+  s.news=[];return s;
+}
+let S,tab='market',sheetId=null,sheetQty=0,quiet=false,timer=null;
+
+function load(){
+  try{const raw=localStorage.getItem(KEY);if(raw){const o=JSON.parse(raw);if(o&&o.v===6)return o}}catch(e){}
+  return null;
+}
+function save(){
+  if(!S)return;
+  try{S.savedAt=Date.now();localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}
+}
+
+/* ============ محرك السوق ============ */
+function costMul(gid){
+  const fx=S.world&&S.world.fx&&S.world.fx.index>0?S.world.fx.index:1;
+  return S.costIdx*(1+IMPORT_SHARE[gid]*(fx-1));
+}
+function realMul(){
+  const dow=((S.startDow!==undefined?S.startDow:new Date().getDay())+Math.floor(S.tick/24))%7;
+  let m=dow===5?1.25:dow===6?1.1:1;
+  const w=S.world;
+  if(w){
+    const wt=w.weather&&w.weather[S.gov];
+    if(wt){if(wt.tempC>=40)m*=.85;else if(wt.rain)m*=.9}
+    if(w.calendar&&w.calendar.holiday)m*=1.25;
+  }
+  return m;
+}
+function marketTick(silent){
+  for(const g of GOODS){
+    const s=S.market[g.id];
+    s.ss=clamp(s.ss*.985+gauss()*g.vol*.25,-.6,.9);
+    s.ds=clamp(s.ds*.985+gauss()*g.vol*.25,-.5,.8);
+    let prod=0;
+    for(const P of S.prods){
+      if(P.g!==g.id)continue;
+      const ratio=s.price/(P.cost*costMul(P.g));
+      const q=P.cap/24*(P.staff/P.W)*clamp((ratio-.9)/.4,.15,1.15)*(1+s.ss);
+      P.out+=q;prod+=q;
+    }
+    const hh=g.hh/24*(1+s.ds)*Math.pow(s.price/g.base,-.4)*Math.sqrt(S.wage);
+    s.stock=Math.max(0,s.stock+prod-hh);
+    s.stock*=1-(g.spoil*.6)/24;
+    const cover=s.stock/g.D;
+    const target=clamp(g.base*Math.pow(g.cover/Math.max(cover,.02),.55),g.base*.45,g.base*2.6);
+    s.price+=.15*(target-s.price);
+    s.hist.push(s.price);if(s.hist.length>48)s.hist.shift();
+  }
+  S.costIdx=1+(S.costIdx-1)*.995;
+  S.comp=clamp(S.comp+gauss()*.006+(1-S.comp)*.02,.88,1.15);
+  S.wage+=(1-S.wage)*.004;
+  S.rateAdj*=.995;
+  for(const c of S.comps)c.off=clamp(c.off+gauss()*.004+(c.base-c.off)*.02,.8,1.25);
+  if(S.boost.left>0){S.boost.left--;if(!S.boost.left)S.boost.v=0}
+  if(!silent&&rnd()<.03)fireEvent();
+}
+function fireEvent(){
+  const e=EVENTS[Math.floor(rnd()*EVENTS.length)];
+  if(e.fx)for(const id in e.fx){const f=e.fx[id],s=S.market[id];if(f.ss)s.ss+=f.ss;if(f.ds)s.ds+=f.ds}
+  if(e.cust){S.boost={v:e.cust,left:e.dur}}
+  if(e.wage){S.wage=clamp(S.wage+e.wage,.7,1.3)}
+  if(e.rate){S.rateAdj=clamp(S.rateAdj+e.rate,-.004,.006)}
+  if(e.cost){S.costIdx=clamp(S.costIdx+e.cost,.8,1.5)}
+  S.news.unshift({d:Math.floor(S.tick/24)+1,h:S.tick%24,t:e.t});
+  if(S.news.length>8)S.news.pop();
+}
+const cost=m=>Object.entries(m.rec).reduce((a,[id,q])=>a+q*S.market[id].price,0);
+const costBase=m=>Object.entries(m.rec).reduce((a,[id,q])=>a+q*GM[id].base,0);
+const compPrice=m=>m.ref*S.pl*S.comp*(.7+.3*cost(m)/costBase(m));
+function share(m,price){
+  const cp=compPrice(m),wp=Math.pow(S.rep/3,2)*Math.pow(cp/price,4);
+  const wc=S.comps.reduce((a,c)=>a+Math.pow(c.q/3,2)*Math.pow(1/c.off,4),0);
+  return wp/(wp+wc+HOME_W);
+}
+
+/* ============ محاكاة المطعم ============ */
+function capacity(){
+  const mkt=COOK_SAL*S.wage;
+  return 6+S.cooks*4*(1+clamp(S.salary/mkt-1,0,.5)*.4);
+}
+function restaurantHour(h){
+  const mult=PROFILE[h];if(!mult||!licensed())return;
+  const t=S.today,cap=capacity();let served=0;
+  const cps={};MENU.forEach(m=>{cps[m.id]=compPrice(m)});
+  const totW=MENU.reduce((a,m)=>a+m.pop,0);
+  const p=OUT_RATE*mult/15.5*(1+S.boost.v)*realMul();
+  for(const r of S.pop){
+    if(rnd()>p)continue;
+    t.city++;
+    let x=rnd()*totW,m=MENU[MENU.length-1];
+    for(const d of MENU){x-=d.pop;if(x<=0){m=d;break}}
+    const st=S.menu[m.id],cp=cps[m.id];
+    const wp=(st.on&&r.w>=st.price)?Math.pow(S.rep/3,2)*Math.pow(cp/st.price,4):0;
+    const ws=S.comps.map(c=>(r.w>=cp*c.off)?Math.pow(c.q/3,2)*Math.pow(1/c.off,4):0);
+    let tot=wp+HOME_W;for(const w of ws)tot+=w;
+    let y=rnd()*tot;
+    if(y<wp){
+      if(served>=cap){t.mCap++;S.rep=Math.max(1,S.rep-.006);continue}
+      if(Object.entries(m.rec).some(([id,q])=>S.inv[id].qty<q-1e-9)){
+        t.mStock++;t.stock[m.id]=(t.stock[m.id]||0)+1;S.rep=Math.max(1,S.rep-.006);continue}
+      let c=0;
+      for(const [id,q] of Object.entries(m.rec)){c+=q*S.inv[id].avg;S.inv[id].qty-=q}
+      t.mat+=c;t.rev+=st.price;S.cash+=st.price;t.served++;served++;
+      r.w=Math.round((r.w-st.price)*10)/10;
+      S.rep=clamp(S.rep+(st.price/cp<=1.05?.004:-.002),1,5);
+    }else{
+      y-=wp;
+      for(let k=0;k<ws.length;k++){
+        y-=ws[k];
+        if(y<0){const c=S.comps[k];r.w=Math.round((r.w-cp*c.off)*10)/10;c.sold++;if(st.on)t.mPrice++;for(const [id,q] of Object.entries(m.rec)){const ms=S.market[id];ms.stock=Math.max(0,ms.stock-q)}break}
+      }
+    }
+  }
+}
+function producersDaily(){
+  S.prods.forEach((P,idx)=>{
+    const ratio=S.market[P.g].price/(P.cost*costMul(P.g));
+    const target=Math.round(P.W*clamp((ratio-.9)/.4,.3,1));
+    const staff=S.pop.filter(r=>r.emp===2&&r.p===idx);
+    if(staff.length>target){
+      for(let k=0;k<staff.length-target;k++){const r=staff[k];r.emp=0;r.p=undefined;r.i=60;r.j=4}
+    }else if(staff.length<target){
+      const pool=S.pop.filter(r=>r.j===4&&!r.emp);
+      for(let k=0;k<Math.min(target-staff.length,pool.length);k++){const r=pool[k];r.emp=2;r.p=idx;r.i=Math.round(P.wage*S.wage)}
+    }
+    let n=0;
+    for(const r of S.pop){if(r.emp===2&&r.p===idx){r.i=Math.round(P.wage*S.wage);n++}}
+    P.staff=n;P.last=P.out;P.out=0;
+  });
+}
+function payday(){
+  producersDaily();
+  for(const r of S.pop){
+    const d=r.i*(r.emp?1:S.wage)*WAGE_SHARE;
+    r.w=Math.round(Math.min(r.w+d,d*3)*10)/10;
+  }
+  const mkt=COOK_SAL*S.wage,qp=clamp((mkt-S.salary)/mkt,0,.5)*.5+.01;
+  let quits=0;
+  for(const r of S.pop){if(r.emp===1&&rnd()<qp){r.emp=0;r.i=60;S.cooks--;quits++}}
+  if(quits){
+    S.news.unshift({d:Math.floor(S.tick/24)+1,h:0,t:'استقال '+quits+' من طباخيك، فراجع الراتب'});
+    if(S.news.length>8)S.news.pop();
+    if(!quiet)toast('استقال '+quits+' من طباخيك. الراتب أقل من أجر السوق؟',3500);
+  }
+  for(const c of S.comps)c.sold=0;
+}
+function endDay(){
+  const t=S.today;
+  for(const g of GOODS){
+    const it=S.inv[g.id],lost=it.qty*g.spoil;
+    if(lost>0){t.spoil+=lost*it.avg;it.qty-=lost}
+    if(it.qty<.01)it.qty=0;
+  }
+  t.mat+=t.spoil;t.ops=RENT;t.sal=S.cooks*S.salary;
+  inspect();
+  let loanPay=0;
+  for(const L of S.loans){
+    const i=L.bal*L.r,pay=Math.min(L.pay,L.bal+i);
+    L.bal-=pay-i;loanPay+=pay;t.fin+=i;L.left--;
+    if(L.left<=0&&L.bal>.5){loanPay+=L.bal;L.bal=0}
+  }
+  S.loans=S.loans.filter(L=>L.bal>.5);
+  if(S.cash<0){const od=-S.cash*.015;t.fin+=od;S.cash-=od;S.rep=Math.max(1,S.rep-.1)}
+  const pre=t.rev-t.mat-t.ops-t.sal-t.fin-t.lic;
+  t.tax=calcTax(pre);
+  S.cash-=t.ops+t.sal+t.tax+loanPay;
+  for(const [k,nm] of [['op','رخصة التشغيل'],['hc','الشهادة الصحية']]){
+    const left=Math.ceil((S.lic[k]-S.tick)/24);
+    if(left>=0&&left<=3)pushNews('تنبيه: '+nm+' تنتهي خلال '+left+' يوم');
+  }
+  const profit=pre-t.tax;
+  S.days.push(Object.assign({d:S.tick/24,profit},t));
+  if(S.days.length>14)S.days.shift();
+  S.today=blankDay();payday();
+  if(!quiet)toast('انتهى اليوم '+(S.tick/24)+' وصافي الربح '+sgn(profit)+' ج',3200);
+}
+function step(){
+  marketTick();
+  if(S.tick%24===8)deliverContracts();
+  restaurantHour(S.tick%24);
+  S.tick++;
+  if(S.tick%24===0)endDay();
+}
+
+/* ============ الشراء والبيع ============ */
+function pushNews(t){
+  S.news.unshift({d:Math.floor(S.tick/24)+1,h:S.tick%24,t});
+  if(S.news.length>8)S.news.pop();
+}
+const licensed=()=>S.lic.op>S.tick;
+function inspect(){
+  if(rnd()>.08)return;
+  if(S.lic.hc<S.tick){
+    S.cash-=HC_FINE;S.today.lic+=HC_FINE;S.rep=Math.max(1,S.rep-.4);
+    pushNews('مفتش الصحة غرّمك '+HC_FINE+' ج لانتهاء الشهادة الصحية');
+  }else{
+    S.rep=clamp(S.rep+.05,1,5);pushNews('اجتاز مطعمك تفتيش الصحة بنجاح');
+  }
+}
+function renewLic(k){
+  const fee=k==='op'?OP_FEE:HC_FEE,days=k==='op'?OP_DAYS:HC_DAYS;
+  if(S.cash<fee){toast('الرصيد لا يكفي للتجديد');return}
+  S.cash-=fee;S.today.lic+=fee;S.lic[k]=Math.max(S.lic[k],S.tick)+days*24;
+  toast('تم التجديد');render();save();
+}
+function creditLimit(){
+  const debt=S.loans.reduce((a,L)=>a+L.bal,0);
+  const last=S.days.slice(-7),avg=last.length?last.reduce((a,d)=>a+d.profit,0)/last.length:0;
+  return Math.max(0,2000+2500*(S.rep-1)+5*avg-debt);
+}
+const loanRate=()=>clamp(.011-.0017*S.rep+S.rateAdj,.002,.015);
+const annuity=(P,r,n)=>Math.ceil(P*r/(1-Math.pow(1+r,-n)));
+function takeLoan(P,n){
+  if(P>creditLimit()){toast('سقفك الائتماني الحالي لا يسمح بهذا القرض');return}
+  const r=loanRate(),fee=P*LOAN_FEE;
+  S.loans.push({id:S.nextId++,P,bal:P,r,pay:annuity(P,r,n),left:n});
+  S.cash+=P-fee;S.today.fin+=fee;
+  toast('تم صرف القرض بعد خصم رسوم '+fmt(fee)+' ج');render();save();
+}
+function repayLoan(id){
+  const L=S.loans.find(x=>x.id===id);if(!L)return;
+  if(S.cash<L.bal){toast('الرصيد لا يكفي للسداد المبكر');return}
+  S.cash-=L.bal;S.loans=S.loans.filter(x=>x.id!==id);toast('تم سداد القرض');render();save();
+}
+function openContract(id,qty,days){
+  if(qty<=0)return;
+  if(S.contracts.length>=MAX_CONTRACTS){toast('وصلت للحد الأقصى من العقود');return}
+  if(S.contracts.some(c=>c.g===id)){toast('لديك عقد لهذه السلعة بالفعل');return}
+  const price=S.market[id].price*(days>=14?.92:.96);
+  S.contracts.push({id:S.nextId++,g:id,qty,price,days,left:days});
+  toast('تم توقيع عقد توريد '+GM[id].name+' لمدة '+days+' يوم');closeSheet();render();save();
+}
+function deliverContracts(){
+  for(const c of S.contracts){
+    const it=S.inv[c.g],ms=S.market[c.g],q=Math.min(c.qty,ms.stock);
+    if(q>0){const cost=q*c.price;it.avg=(it.qty*it.avg+cost)/(it.qty+q);it.qty+=q;S.cash-=cost;ms.stock-=q}
+    if(q<c.qty-1e-9)pushNews('المورّد لم يسلّم كامل كمية '+GM[c.g].name+' لنقص المعروض');
+    c.left--;
+  }
+  S.contracts=S.contracts.filter(c=>c.left>0);
+}
+function cancelContract(id){
+  const c=S.contracts.find(x=>x.id===id);if(!c)return;
+  const pen=c.left*c.qty*c.price*.2;
+  S.cash-=pen;S.today.fin+=pen;S.contracts=S.contracts.filter(x=>x.id!==id);
+  toast('تم إلغاء العقد وغرامته '+fmt(pen)+' ج');render();save();
+}
+function alertText(){
+  const left=Math.ceil((S.lic.op-S.tick)/24);
+  if(!licensed())return 'رخصة التشغيل منتهية والمطعم مغلق. جدّدها من تبويب الالتزامات';
+  if(left<=3)return 'رخصة التشغيل تنتهي خلال '+left+' يوم';
+  if(S.lic.hc<S.tick)return 'الشهادة الصحية منتهية، وقد يغرّمك المفتش';
+  if(S.cash<0)return 'رصيدك سالب وعليه فوائد سحب على المكشوف';
+  return '';
+}
+function buyRaw(id,n){
+  const g=GM[id],s=S.market[id],it=S.inv[id];
+  const c=n*s.price*(1+SPREAD);
+  it.avg=(it.qty*it.avg+c)/(it.qty+n);it.qty+=n;S.cash-=c;
+  s.stock=Math.max(0,s.stock-n);return c;
+}
+function doBuy(id,n){
+  const s=S.market[id];if(n<=0)return;
+  const c=n*s.price*(1+SPREAD);
+  if(c>S.cash){toast('الرصيد لا يكفي لهذه الكمية');return}
+  if(n>s.stock+1e-9){toast('المتاح في السوق أقل من الكمية المطلوبة');return}
+  buyRaw(id,n);toast('تم شراء '+n+' '+GM[id].unit+' من '+GM[id].name);render();save();
+}
+function doSell(id,n){
+  const g=GM[id],s=S.market[id],it=S.inv[id];
+  if(n<=0||n>it.qty+1e-9)return;
+  S.cash+=n*s.price*(1-SELL_CUT);it.qty-=n;if(it.qty<.01)it.qty=0;
+  s.stock+=n;
+  toast('تم بيع '+n+' '+g.unit+' من '+g.name);render();save();
+}
+function restockPlan(P){
+  const need={};
+  MENU.forEach(m=>{if(!S.menu[m.id].on)return;for(const [id,q] of Object.entries(m.rec))need[id]=(need[id]||0)+q*P});
+  const plan=[];let total=0;
+  for(const id in need){
+    let sh=need[id]-S.inv[id].qty;if(sh<=0)continue;
+    sh=GM[id].unit==='قطعة'?Math.ceil(sh):Math.ceil(sh*10)/10;
+    plan.push([id,sh]);total+=sh*S.market[id].price*(1+SPREAD);
+  }
+  return{plan,total};
+}
+function doRestock(P){
+  const {plan,total}=restockPlan(P);
+  if(!plan.length){toast('مخزونك يكفي بالفعل');return}
+  if(S.cash<=0){toast('لا يوجد رصيد للشراء');return}
+  const f=Math.min(1,S.cash/total*.98);
+  for(const [id,sh] of plan){
+    let n=GM[id].unit==='قطعة'?Math.floor(sh*f):Math.floor(sh*f*10)/10;
+    const av=S.market[id].stock;n=Math.min(n,GM[id].unit==='قطعة'?Math.floor(av):Math.floor(av*10)/10);
+    if(n>0)buyRaw(id,n);
+  }
+  toast(f<1?'اشتريت ما يسمح به رصيدك':'تم تجهيز المخزن');render();save();
+}
+
+/* ============ الواجهة ============ */
+function spark(h,cls){
+  const a=h.slice(-36);if(a.length<2)return '<svg class="spark flat" viewBox="0 0 84 28"></svg>';
+  const mn=Math.min(...a),mx=Math.max(...a),w=84,hh=28;
+  const pts=a.map((v,i)=>(i/(a.length-1)*w).toFixed(1)+','+(hh-2-((v-mn)/((mx-mn)||1))*(hh-4)).toFixed(1)).join(' ');
+  return '<svg class="spark '+cls+'" viewBox="0 0 '+w+' '+hh+'" aria-hidden="true"><polyline points="'+pts+'" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/></svg>';
+}
+function marketView(){
+  const rows=GOODS.map(g=>{
+    const s=S.market[g.id],h=s.hist,ref=h[Math.max(0,h.length-25)];
+    const ch=(s.price/ref-1)*100,cls=ch>.5?'up':ch<-.5?'down':'flat';
+    const own=S.inv[g.id].qty,cov=s.stock/g.D,stt=cov>g.cover*1.6?'وفرة':cov<g.cover*.5?'شحيح':'';
+    return '<button class="brow" data-act="open" data-id="'+g.id+'">'+
+      '<span class="bname"><b>'+g.name+'</b><small>'+(own>0?'عندك '+N(r1(own))+' '+g.unit:'السعر لكل '+g.unit)+(stt?' ، السوق '+stt:'')+'</small></span>'+
+      spark(h,cls)+
+      '<span class="pcol"><span class="plate"><b>'+N(money(s.price))+'</b></span><span class="chg '+cls+'">'+(cls==='up'?'▲ ':cls==='down'?'▼ ':'')+N(Math.abs(ch).toFixed(1))+'%</span></span></button>';
+  }).join('');
+  let intro='';
+  if(S.speed===0)intro+='<div class="warn">الوقت متوقف. اشترِ المكونات أولاً ثم اضغط «عادي» أو «سريع» ليبدأ اليوم.</div>';
+  const empty=GOODS.every(g=>S.inv[g.id].qty<=0);
+  if(empty)intro+='<div class="warn">مخزنك فارغ. اضغط على أي سلعة لشرائها، أو افتح تبويب المخزن واختر «تجهيز تلقائي».</div>';
+  return '<h2>لوحة الأسعار</h2><p class="sub">الأسعار تتغير كل ساعة بحسب العرض والطلب. السهم يوضح التغير خلال آخر 24 ساعة.</p>'+intro+'<div class="board">'+rows+'</div>'+
+    '<p class="sub">اضغط على سلعة لشرائها أو بيعها. الشراء بكميات كبيرة يرفع السعر مؤقتًا.</p>'+contractsCard();
+}
+function contractsCard(){
+  const rows=S.contracts.map(c=>{
+    const g=GM[c.g],mp=S.market[c.g].price,d=(mp/c.price-1)*100;
+    return '<div class="row"><span>'+g.name+'<br><small style="color:var(--ink2)">'+N(c.qty)+' '+g.unit+' يوميًا بسعر '+N(money(c.price))+' ج، باقي '+N(c.left)+' يوم</small></span><span style="text-align:left"><b class="'+(d>=0?'pos':'neg')+'">'+(d>=0?'أرخص':'أغلى')+' من السوق '+N(Math.abs(d).toFixed(0))+'%</b><br><button class="chip" data-act="cancelc" data-id="'+c.id+'">إلغاء</button></span></div>';
+  }).join('');
+  return '<div class="card"><b>عقود التوريد</b><p class="hint">تثبّت سعر السلعة وتستلم كمية يومية تلقائيًا الساعة 08:00. افتح أي سلعة من اللوحة لتوقيع عقد. إلغاء العقد يكلّف 20% من قيمة المتبقي.</p>'+(rows||'<p class="hint">لا توجد عقود حاليًا.</p>')+'</div>';
+}
+function canMake(m){return Math.floor(Math.min(...Object.entries(m.rec).map(([id,q])=>S.inv[id].qty/q))+1e-9)}
+function invView(){
+  const P=25,{plan,total}=restockPlan(P);
+  const chips=MENU.map(m=>'<div class="row"><span>'+m.name+'</span><b>'+N(canMake(m))+' وجبة</b></div>').join('');
+  const list=GOODS.map(g=>{
+    const it=S.inv[g.id],mp=S.market[g.id].price;
+    return '<div class="row"><span>'+g.name+'<br><small style="color:var(--ink2)">متوسط تكلفتك '+N(money(it.avg))+' ج، السوق '+N(money(mp))+' ج</small></span><b>'+N(r1(it.qty))+' '+g.unit+'</b></div>';
+  }).join('');
+  return '<h2>المخزن</h2><p class="sub">بعض المكونات تتلف مع الوقت، فلا تكدّس أكثر من حاجتك.</p>'+
+    '<div class="card"><b>الوجبات الجاهزة بما في المخزن</b>'+chips+'</div>'+
+    '<div class="card"><button class="btn" data-act="restock"'+(plan.length?'':' disabled')+'>تجهيز تلقائي لـ '+P+' وجبة من كل صنف</button>'+
+    '<p class="hint">'+(plan.length?'التكلفة التقريبية '+N(fmt(total))+' ج':'مخزونك يكفي بالفعل')+'</p></div>'+
+    '<div class="card"><b>المكونات</b>'+list+'</div>';
+}
+function restView(){
+  const cap=Math.floor(capacity());
+  let h='<h2>المطعم</h2><p class="sub">حدّد الأسعار بحسب تكلفة السوق وأسعار المنافسين. ساعات العمل من 10:00 إلى 24:00.</p>';
+  h+='<div class="card"><div class="row"><span>تقييم المطعم</span><b>'+N(S.rep.toFixed(2))+' من 5</b></div><div class="bar"><i style="width:'+((S.rep-1)/4*100)+'%"></i></div>'+
+     '<div class="row"><span>الطباخون</span><b>'+N(S.cooks)+'</b></div>'+
+     '<div class="row"><span>أقصى خدمة في الساعة</span><b>'+N(cap)+' زبون</b></div>'+
+     (S.boost.left>0?'<div class="row"><span>حدث خاص</span><b class="pos">إقبال إضافي</b></div>':'')+'</div>';
+  h+=MENU.map(m=>{
+    const st=S.menu[m.id],c=cost(m),cp=compPrice(m),w=share(m,st.price),mg=(st.price-c)/st.price*100;
+    const miss=Object.keys(m.rec).filter(id=>S.inv[id].qty<m.rec[id]-1e-9).map(id=>GM[id].name);
+    let warns='';
+    if(st.price<c)warns+='<div class="warn">سعرك أقل من تكلفة المكونات، أنت تبيع بخسارة.</div>';
+    else if(st.price>cp*1.25)warns+='<div class="warn">سعرك أعلى بكثير من متوسط السوق، وزبائنك سيتجهون للمنافسين.</div>';
+    if(st.on&&miss.length)warns+='<div class="warn">ينقصك: '+miss.join('، ')+'</div>';
+    return '<div class="card '+(st.on?'':'off')+'"><div class="mhead"><b>'+m.name+'</b><button class="chip" data-act="tog" data-id="'+m.id+'">'+(st.on?'على القائمة':'متوقف')+'</button></div>'+
+      '<div class="stepper"><button data-act="px" data-id="'+m.id+'" data-d="-5">−5</button><button data-act="px" data-id="'+m.id+'" data-d="-1">−1</button><output>'+N(fmt(st.price))+' ج</output><button data-act="px" data-id="'+m.id+'" data-d="1">+1</button><button data-act="px" data-id="'+m.id+'" data-d="5">+5</button></div>'+
+      '<div class="row"><span>تكلفة المكونات الآن</span><b>'+N(money(c))+' ج</b></div>'+
+      '<div class="row"><span>هامش الربح</span><b class="'+(mg<0?'neg':'pos')+'">'+N(mg.toFixed(0))+'%</b></div>'+
+      '<div class="row"><span>متوسط سعر السوق</span><b>'+N(fmt(cp))+' ج</b></div>'+
+      '<div class="lbl">حصتك المتوقعة من زبائن هذا الصنف: '+N((w*100).toFixed(0))+'%</div><div class="bar"><i style="width:'+(w*100)+'%"></i></div>'+warns+'</div>';
+  }).join('');
+  const mkt=COOK_SAL*S.wage,unemp=S.pop.filter(r=>r.j===4&&!r.emp).length;
+  const qp=clamp((mkt-S.salary)/mkt,0,.5)*.5+.01;
+  h+='<div class="card"><b>الفريق</b>'+
+     '<div class="row"><span>طباخوك</span><b>'+N(S.cooks)+'</b></div>'+
+     '<div class="lbl">راتب الطباخ اليومي</div>'+
+     '<div class="stepper"><button data-act="sal" data-d="-10">−10</button><output>'+N(fmt(S.salary))+' ج</output><button data-act="sal" data-d="10">+10</button></div>'+
+     '<div class="row"><span>متوسط أجر السوق</span><b>'+N(fmt(mkt))+' ج</b></div>'+
+     '<div class="row"><span>احتمال استقالة كل طباخ يوميًا</span><b class="'+(qp>.05?'neg':'pos')+'">'+N((qp*100).toFixed(0))+'%</b></div>'+
+     '<div class="row"><span>عاطلون متاحون للتوظيف</span><b>'+N(unemp)+'</b></div>'+
+     '<p class="hint">راتب أعلى من السوق يرفع إنتاجية الطباخ حتى 20%، وراتب أقل منه يزيد الاستقالات. التوظيف يكلّف '+N(HIRE_COST)+' ج مرة واحدة.</p>'+
+     '<div class="two"><button class="btn" data-act="hire"'+(S.cooks>=6||S.cash<HIRE_COST||!unemp?' disabled':'')+'>وظّف طباخًا</button><button class="btn ghost" data-act="fire"'+(S.cooks<=0?' disabled':'')+'>سرّح طباخًا</button></div></div>';
+  return h;
+}
+function ledgerView(){
+  const t=S.today,ops=RENT,sal=S.cooks*S.salary,fin=t.fin+S.loans.reduce((a,L)=>a+L.bal*L.r,0),pre=t.rev-t.mat-ops-sal-fin-t.lic,tax=calcTax(pre),profit=pre-tax;
+  const lost=t.mPrice+t.mStock+t.mCap;
+  let tips='';
+  if(t.mStock>0)tips+='<div class="warn">خسرت '+t.mStock+' زبونًا لنفاد المكونات. اشترِ كميات أكبر.</div>';
+  if(t.mCap>0)tips+='<div class="warn">خسرت '+t.mCap+' زبونًا بسبب الازدحام. وظّف طباخًا.</div>';
+  if(t.mPrice>0)tips+='<div class="warn">ذهب '+t.mPrice+' زبونًا لمنافس. راجع سعرك وتقييمك.</div>';
+  const hist=S.days.slice(-7).reverse().map(d=>'<tr><td>'+d.d+'</td><td>'+N(fmt(d.rev))+'</td><td>'+N(fmt(d.mat))+'</td><td>'+N(fmt(d.ops+d.sal+d.tax+d.fin+d.lic))+'</td><td class="'+(d.profit>=0?'pos':'neg')+'">'+N(sgn(d.profit))+'</td><td>'+N(d.served)+'</td></tr>').join('');
+  return '<h2>الدفتر</h2><p class="sub">الإيجار والأجور والأقساط والضريبة تُخصم عند منتصف الليل.</p>'+
+    '<div class="card"><b>حساب اليوم حتى الآن</b><div class="formula">الربح = الإيرادات − (المواد + التشغيل + الأجور + الفوائد والرسوم + التراخيص + الضرائب)</div>'+
+    '<div class="row"><span>الإيرادات</span><b>'+N(fmt(t.rev))+' ج</b></div>'+
+    '<div class="row"><span>تكلفة المواد المستهلكة</span><b>'+N(fmt(t.mat))+' ج</b></div>'+
+    '<div class="row"><span>التشغيل (إيجار وخدمات)</span><b>'+N(fmt(ops))+' ج</b></div>'+
+    '<div class="row"><span>الأجور</span><b>'+N(fmt(sal))+' ج</b></div>'+
+    '<div class="row"><span>فوائد ورسوم</span><b>'+N(fmt(fin))+' ج</b></div>'+
+    '<div class="row"><span>تراخيص وغرامات</span><b>'+N(fmt(t.lic))+' ج</b></div>'+
+    '<div class="row"><span>الضريبة التصاعدية التقديرية</span><b>'+N(fmt(tax))+' ج</b></div>'+
+    '<div class="row"><span>الربح المتوقع</span><b class="'+(profit>=0?'pos':'neg')+'">'+N(sgn(profit))+' ج</b></div></div>'+
+    '<div class="card"><b>الزبائن اليوم</b><div class="row"><span>تمت خدمتهم</span><b>'+N(t.served)+'</b></div><div class="row"><span>فقدتهم</span><b>'+N(lost)+'</b></div>'+tips+'</div>'+
+    '<div class="card"><b>آخر الأيام</b>'+(hist?'<div class="scroll"><table class="tbl"><tr><th>اليوم</th><th>الإيراد</th><th>المواد</th><th>مصاريف</th><th>الربح</th><th>زبائن</th></tr>'+hist+'</table></div>':'<p class="hint">لم ينتهِ أي يوم بعد.</p>')+'</div>'+
+    '<button class="btn ghost" data-act="reset" id="resetBtn">إعادة البدء من الصفر</button>';
+}
+
+function cityView(){
+  const n=S.pop.length,t=S.today;
+  const cnt=JOBS.map((j,i)=>S.pop.filter(r=>r.j===i&&!r.emp).length);
+  const unempRate=cnt[4]/n*100;
+  const avgInc=S.pop.reduce((a,r)=>a+r.i,0)/n*S.wage;
+  const avgW=S.pop.reduce((a,r)=>a+r.w,0)/n;
+  const jobs=JOBS.map((j,i)=>'<div class="lbl">'+j.n+': '+N(cnt[i])+' ، دخل يومي تقريبي '+N(fmt(j.inc*S.wage))+' ج</div><div class="bar"><i style="width:'+(cnt[i]/n*100)+'%"></i></div>').join('');
+  const mine=t.city?(t.served/t.city*100):0;
+  const prodRows=S.prods.map(P=>{
+    const o=P.last||P.cap*(P.staff/P.W),stt=o>=P.cap*.9?'بكامل طاقته':o>=P.cap*.6?'يخفض الإنتاج':'متعثر';
+    return '<div class="row"><span>'+P.name+'<br><small style="color:var(--ink2)">العمالة '+N(P.staff)+' من '+N(P.W)+' ، '+GM[P.g].name+'</small></span><b class="'+(stt==='متعثر'?'neg':stt==='بكامل طاقته'?'pos':'')+'">'+stt+'</b></div>';
+  }).join('');
+  const comps=S.comps.map(c=>'<div class="row"><span>'+c.name+'<br><small style="color:var(--ink2)">تقييم '+N(c.q.toFixed(1))+' ، سعر '+N((c.off*100).toFixed(0))+'% من السوق</small></span><b>'+N(c.sold)+' زبون</b></div>').join('');
+  return '<h2>المدينة</h2><p class="sub">سكان افتراضيون لكل واحد دخل ومحفظة. الطلب على مطعمك يأتي من أموالهم وقراراتهم، وليس من رقم ثابت.</p>'+
+    '<div class="card"><div class="row"><span>عدد السكان</span><b>'+N(fmt(n))+'</b></div>'+
+    '<div class="row"><span>مؤشر الأجور</span><b class="'+(S.wage>=1?'pos':'neg')+'">'+N((S.wage*100).toFixed(0))+'%</b></div>'+
+    '<div class="row"><span>متوسط الدخل اليومي للفرد</span><b>'+N(fmt(avgInc))+' ج</b></div>'+
+    '<div class="row"><span>متوسط ما يملكه للإنفاق على الخروج</span><b>'+N(fmt(avgW))+' ج</b></div>'+
+    '<div class="row"><span>نسبة البطالة</span><b class="'+(unempRate>12?'neg':'')+'">'+N(unempRate.toFixed(1))+'%</b></div>'+
+    '<div class="row"><span>يعملون عندك</span><b>'+N(S.cooks)+'</b></div>'+
+    '<div class="row"><span>يعملون في الإنتاج</span><b>'+N(S.pop.filter(r=>r.emp===2).length)+'</b></div></div>'+
+    '<div class="card"><b>السكان حسب الوظيفة</b>'+jobs+'</div>'+
+    '<div class="card"><b>المنتجون</b><p class="hint">هم من يمدّون السوق. إن انخفض السعر عن تكلفتهم قلّلوا الإنتاج وسرّحوا عمالًا، فيزيد العاطلون.</p>'+prodRows+'</div>'+
+    '<div class="card"><b>اليوم حتى الآن</b>'+
+    '<div class="row"><span>خرجوا لتناول وجبة</span><b>'+N(fmt(t.city))+'</b></div>'+
+    '<div class="row"><span>اشتروا منك</span><b>'+N(fmt(t.served))+' ('+N(mine.toFixed(0))+'%)</b></div>'+
+    '<div class="row"><span>مطعمك</span><b>تقييم '+N(S.rep.toFixed(1))+'</b></div>'+comps+'</div>'+liveCard()+govCard();
+}
+let loanTerm=14;
+function finView(){
+  const lim=creditLimit(),r=loanRate(),debt=S.loans.reduce((a,L)=>a+L.bal,0);
+  const lic=(k,name,fee,days)=>{
+    const d=Math.ceil((S.lic[k]-S.tick)/24);
+    return '<div class="row"><span>'+name+'<br><small class="'+(d>3?'':'neg')+'">'+(d>0?'تنتهي بعد '+N(d)+' يوم':'منتهية')+'</small></span><button class="chip" data-act="renew" data-k="'+k+'">جدّد '+N(days)+' يوم ('+N(fmt(fee))+' ج)</button></div>';
+  };
+  const terms=[7,14,28].map(n=>'<button class="chip" data-act="term" data-n="'+n+'" style="'+(loanTerm===n?'background:var(--plate);color:var(--plate-ink);border-color:var(--plate)':'')+'">'+n+' يومًا</button>').join('');
+  const offers=LOAN_AMOUNTS.map(P=>{
+    const pay=annuity(P,r,loanTerm),tot=pay*loanTerm-P;
+    return '<button class="btn ghost" style="margin-top:8px" data-act="loan" data-p="'+P+'"'+(P>lim?' disabled':'')+'>قرض '+N(fmt(P))+' ج: قسط '+N(fmt(pay))+' ج يوميًا، فوائد تقريبية '+N(fmt(tot))+' ج</button>';
+  }).join('');
+  const loans=S.loans.map(L=>'<div class="row"><span>قرض '+N(fmt(L.P))+' ج<br><small style="color:var(--ink2)">المتبقي '+N(fmt(L.bal))+' ج، قسط '+N(fmt(L.pay))+' ج، باقي '+N(L.left)+' يوم</small></span><button class="chip" data-act="repay" data-id="'+L.id+'">سدّد الآن</button></div>').join('');
+  return '<h2>الالتزامات</h2><p class="sub">التراخيص والقروض. إهمالها يغلق المطعم أو يرهقك بالفوائد.</p>'+
+    (S.cash<0?'<div class="warn">رصيدك سالب. يُحتسب عليك 1.5% يوميًا على العجز وينخفض تقييمك.</div>':'')+
+    '<div class="card"><b>التراخيص</b>'+lic('op','رخصة التشغيل',OP_FEE,OP_DAYS)+lic('hc','الشهادة الصحية',HC_FEE,HC_DAYS)+
+    '<p class="hint">بدون رخصة تشغيل المطعم يغلق. ومفتش الصحة يزورك أحيانًا، والشهادة المنتهية تعني غرامة '+N(HC_FINE)+' ج.</p></div>'+
+    '<div class="card"><b>القروض</b><div class="row"><span>الحد الائتماني المتاح</span><b>'+N(fmt(lim))+' ج</b></div>'+
+    '<div class="row"><span>الفائدة اليومية الحالية</span><b>'+N((r*100).toFixed(2))+'%</b></div>'+
+    '<div class="row"><span>إجمالي ديونك</span><b>'+N(fmt(debt))+' ج</b></div>'+
+    '<div class="lbl">مدة القرض</div><div class="chips">'+terms+'</div>'+offers+
+    '<p class="hint">رسوم إصدار '+N(LOAN_FEE*100)+'% تُخصم من المبلغ. سقفك يرتفع بتقييم المطعم وأرباحه الأخيرة، وسعر الفائدة يتأثر بقرارات البنك المركزي.</p></div>'+
+    (loans?'<div class="card"><b>قروضك الحالية</b>'+loans+'</div>':'');
+}
+let worldStatus={ok:false,at:0};
+function worldUrl(){
+  const m=location.hostname.match(/^(.+)\.github\.io$/),repo=location.pathname.split('/')[1];
+  if(m&&repo)return 'https://raw.githubusercontent.com/'+m[1]+'/'+repo+'/main/world.json';
+  return 'world.json';
+}
+function applyWorld(w){
+  S.world={updatedAt:w.updatedAt,fx:(w.fx&&w.fx.index>0)?{usdEgp:w.fx.usdEgp,index:clamp(w.fx.index,.5,2)}:null,weather:w.weather||null,calendar:w.calendar||null};
+  S.applied=S.applied||[];
+  for(const e of (w.events||[])){
+    if(!e||!e.id||S.applied.includes(e.id))continue;
+    const ef=e.effects||{};
+    if(ef.costIdx)S.costIdx=clamp(S.costIdx+clamp(ef.costIdx,-.3,.3),.8,1.5);
+    if(ef.wage)S.wage=clamp(S.wage+clamp(ef.wage,-.2,.2),.7,1.3);
+    if(ef.cust)S.boost={v:clamp(ef.cust,-.5,.5),left:Math.max(1,e.days||1)*24};
+    S.applied.push(e.id);if(S.applied.length>100)S.applied.shift();
+    pushNews('من الواقع: '+e.text);
+  }
+}
+async function loadWorld(){
+  if(!S)return;
+  const urls=[worldUrl()];if(urls[0]!=='world.json')urls.push('world.json');
+  for(const u of urls){
+    try{
+      const r=await fetch(u+'?t='+Date.now(),{cache:'no-store'});
+      if(!r.ok)continue;
+      const w=await r.json();
+      if(!w||typeof w!=='object')continue;
+      applyWorld(w);worldStatus={ok:true,at:Date.now()};render();save();return;
+    }catch(e){}
+  }
+  worldStatus.ok=false;
+}
+function liveCard(){
+  const w=S.world,on=worldStatus.ok;
+  let rows='<div class="row"><span>الاتصال بالواقع</span><b class="'+(on?'pos':'neg')+'">'+(on?'متصل':'غير متصل')+'</b></div>';
+  if(w){
+    const d=new Date(w.updatedAt);
+    if(!isNaN(d))rows+='<div class="row"><span>آخر تحديث للبيانات</span><b>'+N(d.toLocaleString('en-GB',{hour12:false}))+'</b></div>';
+    if(w.fx)rows+='<div class="row"><span>الدولار مقابل الجنيه</span><b>'+N(Number(w.fx.usdEgp).toFixed(2))+' ('+N((w.fx.index*100).toFixed(0))+'% من يوم البدء)</b></div>';
+    const gw=w.weather&&w.weather[S.gov];
+    if(gw)rows+='<div class="row"><span>الطقس في محافظتك</span><b>'+N(Math.round(gw.tempC))+'° '+(gw.rain?'مع أمطار':'')+'</b></div>';
+    if(w.calendar)rows+='<div class="row"><span>اليوم الحقيقي</span><b>'+(w.calendar.holiday?w.calendar.holiday:'يوم عادي')+'</b></div>';
+    rows+='<p class="hint">الدولار يرفع تكلفة المنتجين بحسب نسبة الاستيراد في كل سلعة (نسب تقديرية مني). الحر الشديد والمطر يقلّلان الإقبال، والإجازات والجمعة والسبت تزيده.</p>';
+  }else{
+    rows+='<p class="hint">لا توجد بيانات حية الآن. هذا طبيعي في رابط المعاينة، وتعمل بعد استضافة اللعبة على موقعك.</p>';
+  }
+  return '<div class="card"><b>الواقع الحي</b>'+rows+'</div>';
+}
+let picking=false;
+function pickerView(){
+  const rows=[...GOVS].sort((a,b)=>b.pop-a.pop).map(g=>'<button class="brow" data-act="gov" data-id="'+g.id+'"><span class="bname"><b>'+g.name+'</b><small>'+TIERS[g.tier].n+'</small></span><span></span><span class="pcol"><span class="plate"><b>'+N(g.pop.toFixed(g.pop<1?2:1))+'</b></span><span class="chg flat">مليون</span></span></button>').join('');
+  return '<h2>RealWorld-X: مصر</h2><p class="sub">اختر المحافظة التي ستفتح فيها مطعمك. أعداد السكان حقيقية، وتؤثر على دخل الناس وأسعار الأكل حولك.</p><div class="board">'+rows+'</div>';
+}
+function showPicker(){
+  clearTimeout(timer);S=null;picking=true;document.body.classList.add('picking');
+  $('#view').innerHTML=pickerView();window.scrollTo(0,0);
+}
+function startGame(id){
+  S=newState(id);picking=false;document.body.classList.remove('picking');
+  tab='market';render();save();loop();window.scrollTo(0,0);loadWorld();
+}
+function govCard(){
+  const g=GOVS.find(x=>x.id===S.gov),T=TIERS[g.tier],tot=GOVS.reduce((a,x)=>a+x.pop,0);
+  const rows=[...GOVS].sort((a,b)=>b.pop-a.pop).map(x=>{const me=x.id===S.gov;return '<div class="lbl" style="'+(me?'color:var(--ink);font-weight:700':'')+'">'+x.name+': '+N(x.pop.toFixed(2))+' مليون</div><div class="bar"><i style="width:'+(x.pop/10.5*100)+'%;'+(me?'background:var(--plate)':'')+'"></i></div>'}).join('');
+  return '<div class="card"><b>مصر وموقعك فيها</b>'+
+    '<div class="row"><span>محافظتك</span><b>'+g.name+'</b></div>'+
+    '<div class="row"><span>سكان محافظتك</span><b>'+N(g.pop.toFixed(2))+' مليون ('+N((g.pop/tot*100).toFixed(1))+'%)</b></div>'+
+    '<div class="row"><span>الطابع الاقتصادي</span><b>'+T.n+'</b></div>'+
+    '<div class="row"><span>كل ساكن افتراضي يمثّل</span><b>'+N(fmt(g.pop*1e6/POP_N))+' شخص</b></div>'+
+    '<p class="hint">أعداد السكان حقيقية من الساعة السكانية للجهاز المركزي للتعبئة العامة والإحصاء (يوليو 2026). مؤشر الدخل '+N(T.idx)+' تقدير مبني على الفرق الحقيقي بين إنفاق الأسرة في الحضر (71,992 ج) والريف (55,211 ج) في بحث 2019/2020، وليس رقمًا خاصًا بكل محافظة.</p></div>'+
+    '<div class="card"><b>محافظات مصر حسب السكان</b>'+rows+'</div>';
+}
+function renderHead(){
+  const c=$('#cash');c.innerHTML=N(fmt(S.cash))+' ج';c.className=S.cash<0?'neg':'';
+  const h=S.tick%24;
+  $('#day').textContent='اليوم '+(Math.floor(S.tick/24)+1);
+  $('#hr').textContent=pad(h)+':00';
+  $('#open').textContent=!licensed()?'مغلق: لا رخصة':(PROFILE[h]?'المطعم مفتوح':'المطعم مغلق');
+  $('#news').textContent=alertText()||(S.news[0]?S.news[0].t:'لا أخبار جديدة في السوق');
+  [0,1,2,3].forEach(i=>$('#sp'+i).classList.toggle('on',S.speed===i));
+}
+function render(){
+  if(!S)return;
+  renderHead();
+  const v={market:marketView,inv:invView,rest:restView,city:cityView,ledger:ledgerView,fin:finView}[tab];
+  $('#view').innerHTML=v();
+  ['market','inv','rest','city','ledger','fin'].forEach(k=>$('#t-'+k).classList.toggle('on',k===tab));
+  if(sheetId)updateSheet();
+}
+
+/* ============ نافذة الشراء والبيع ============ */
+function openSheet(id){sheetId=id;sheetQty=GM[id].step;$('#sheet').classList.add('open');updateSheet()}
+function closeSheet(){sheetId=null;$('#sheet').classList.remove('open')}
+function updateSheet(){
+  const g=GM[sheetId],s=S.market[sheetId],it=S.inv[sheetId];
+  const buyP=s.price*(1+SPREAD),sellP=s.price*(1-SELL_CUT);
+  const bc=sheetQty*buyP,sv=sheetQty*sellP;
+  const presets=[1,2,5,10].map(k=>g.step*k);
+  const chips=presets.map(q=>'<button class="chip" data-act="setq" data-q="'+q+'">'+q+'</button>').join('')+(it.qty>0?'<button class="chip" data-act="setq" data-q="'+r1(Math.floor(it.qty*10)/10)+'">الكل</button>':'');
+  $('#sheetBody').innerHTML=
+    '<div class="shead"><b>'+g.name+'</b><button class="chip" data-act="close">إغلاق</button></div>'+
+    '<div class="row"><span>سعر السوق لكل '+g.unit+'</span><b>'+N(money(s.price))+' ج</b></div>'+
+    '<div class="row"><span>سعر الشراء (يشمل هامش التاجر)</span><b>'+N(money(buyP))+' ج</b></div>'+
+    '<div class="row"><span>سعر البيع لك</span><b>'+N(money(sellP))+' ج</b></div>'+
+    '<div class="row"><span>المتاح في السوق</span><b>'+N(fmt(s.stock))+' '+g.unit+'</b></div>'+
+    '<div class="row"><span>مخزونك</span><b>'+N(r1(it.qty))+' '+g.unit+'</b></div>'+
+    '<div class="stepper"><button data-act="qty" data-d="-1" aria-label="أنقص">−</button><output>'+N(sheetQty)+' '+g.unit+'</output><button data-act="qty" data-d="1" aria-label="زِد">+</button></div>'+
+    '<div class="chips">'+chips+'</div>'+
+    '<div class="two"><button class="btn" data-act="buy"'+(sheetQty<=0||bc>S.cash||sheetQty>s.stock?' disabled':'')+'>اشترِ بـ '+N(fmt(bc))+' ج</button>'+
+    '<button class="btn ghost" data-act="sell"'+(sheetQty<=0||sheetQty>it.qty+1e-9?' disabled':'')+'>بِع بـ '+N(fmt(sv))+' ج</button></div>'+
+    '<p class="hint">الأسعار تتحرك كل ساعة، فراجع المبلغ قبل التأكيد.</p>'+
+    '<div class="lbl" style="margin-top:14px">عقد توريد: '+N(sheetQty)+' '+g.unit+' يوميًا بسعر مثبّت</div>'+
+    '<div class="two"><button class="btn ghost" data-act="mkc" data-days="7">7 أيام بخصم 4%<br>'+N(money(s.price*.96))+' ج</button><button class="btn ghost" data-act="mkc" data-days="14">14 يومًا بخصم 8%<br>'+N(money(s.price*.92))+' ج</button></div>';
+}
+
+/* ============ تنبيه سريع ============ */
+let toastT=null;
+function toast(msg,ms){const t=$('#toast');t.textContent=msg;t.style.display='block';clearTimeout(toastT);toastT=setTimeout(()=>{t.style.display='none'},ms||2200)}
+
+/* ============ الحلقة والتقدم أثناء الغياب ============ */
+function loop(){
+  clearTimeout(timer);
+  if(!S||S.speed===0||document.hidden)return;
+  timer=setTimeout(()=>{step();render();save();loop()},TICK_MS[S.speed]);
+}
+function catchUp(){
+  if(!S)return;
+  if(S.speed===0){S.savedAt=Date.now();return}
+  const n=Math.min(OFFLINE_CAP,Math.floor((Date.now()-S.savedAt)/(S.speed===3?3600000:OFFLINE_TICK_MS)));
+  if(n<1)return;
+  const c0=S.cash;quiet=true;
+  for(let i=0;i<n;i++)step();
+  quiet=false;S.savedAt=Date.now();
+  toast('غبتَ فمرّت '+n+' ساعة في اللعبة، وتغيّر رصيدك '+sgn(S.cash-c0)+' ج',6000);
+}
+document.addEventListener('visibilitychange',()=>{
+  if(document.hidden){save();clearTimeout(timer)}
+  else{catchUp();render();loop();loadWorld()}
+});
+
+/* ============ الأحداث ============ */
+let resetArmed=false;
+document.addEventListener('click',e=>{
+  if(e.target===$('#sheet')){closeSheet();return}
+  const b=e.target.closest('[data-act]');if(!b)return;
+  const a=b.dataset.act,id=b.dataset.id;
+  switch(a){
+    case 'tab':tab=b.dataset.tab;render();window.scrollTo(0,0);break;
+    case 'speed':
+      S.speed=+b.dataset.v;
+      if(S.speed===3){
+        const h=Number(new Intl.DateTimeFormat('en-GB',{timeZone:'Africa/Cairo',hour:'2-digit',hour12:false}).format(new Date()))%24;
+        let t=Math.floor(S.tick/24)*24+h;if(t<S.tick)t+=24;
+        quiet=true;while(S.tick<t)step();quiet=false;
+        toast('الوقت الآن يسير كالواقع: كل ساعة في اللعبة تساوي ساعة حقيقية',3500);
+      }
+      if(S.speed)S.savedAt=Date.now();loop();render();save();break;
+    case 'open':openSheet(id);break;
+    case 'close':closeSheet();break;
+    case 'qty':sheetQty=Math.max(0,Math.round((sheetQty+(+b.dataset.d)*GM[sheetId].step)*10)/10);updateSheet();break;
+    case 'setq':sheetQty=+b.dataset.q;updateSheet();break;
+    case 'buy':doBuy(sheetId,sheetQty);break;
+    case 'sell':doSell(sheetId,sheetQty);break;
+    case 'px':{const st=S.menu[id];st.price=Math.max(1,st.price+(+b.dataset.d));render();save();break}
+    case 'tog':S.menu[id].on=!S.menu[id].on;render();save();break;
+    case 'restock':doRestock(25);break;
+    case 'hire':{
+      const pool=S.pop.filter(r=>r.j===4&&!r.emp);
+      if(!pool.length){toast('لا يوجد عاطلون متاحون في المدينة');break}
+      if(S.cooks<6&&S.cash>=HIRE_COST){
+        const r=pool[Math.floor(rnd()*pool.length)];r.emp=1;r.i=S.salary;
+        S.cash-=HIRE_COST;S.cooks++;render();save();toast('تم توظيف طباخ من سكان المدينة');
+      }
+      break}
+    case 'fire':{
+      const r=S.pop.find(x=>x.emp===1);
+      if(r){r.emp=0;r.i=60;S.cooks--;render();save()}
+      break}
+    case 'gov':startGame(id);break;
+    case 'renew':renewLic(b.dataset.k);break;
+    case 'term':loanTerm=+b.dataset.n;render();break;
+    case 'loan':takeLoan(+b.dataset.p,loanTerm);break;
+    case 'repay':repayLoan(+id);break;
+    case 'mkc':openContract(sheetId,sheetQty,+b.dataset.days);break;
+    case 'cancelc':cancelContract(+id);break;
+    case 'sal':S.salary=clamp(S.salary+(+b.dataset.d),80,300);S.pop.forEach(r=>{if(r.emp===1)r.i=S.salary});render();save();break;
+    case 'reset':
+      if(!resetArmed){resetArmed=true;b.textContent='اضغط مرة أخرى لتأكيد الحذف';setTimeout(()=>{resetArmed=false;const x=$('#resetBtn');if(x)x.textContent='إعادة البدء من الصفر'},4000)}
+      else{resetArmed=false;closeSheet();try{localStorage.removeItem(KEY)}catch(e){}showPicker()}
+      break;
+  }
+});
+
+/* ============ البدء ============ */
+S=load();
+if(S){catchUp();render();loop();loadWorld()}else showPicker();
+setInterval(loadWorld,30*60*1000);
+</script>
+</body>
+</html>
