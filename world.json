@@ -1,8 +1,135 @@
 {
-  "updatedAt": "2026-01-01T00:00:00Z",
-  "fx": null,
-  "weather": null,
-  "calendar": null,
+  "updatedAt": "2026-10-14T14:18:23.185Z",
+  "usdEgp": 52.8044,
+  "weather": {
+    "القاهرة": {
+      "temp": 31.5,
+      "rain": false
+    },
+    "الجيزة": {
+      "temp": 31.4,
+      "rain": false
+    },
+    "القليوبية": {
+      "temp": 31.1,
+      "rain": false
+    },
+    "الإسكندرية": {
+      "temp": 24.4,
+      "rain": false
+    },
+    "البحيرة": {
+      "temp": 26.1,
+      "rain": false
+    },
+    "مطروح": {
+      "temp": 23.4,
+      "rain": false
+    },
+    "الدقهلية": {
+      "temp": 30.1,
+      "rain": false
+    },
+    "الشرقية": {
+      "temp": 30.7,
+      "rain": false
+    },
+    "الغربية": {
+      "temp": 30.6,
+      "rain": false
+    },
+    "المنوفية": {
+      "temp": 30.9,
+      "rain": false
+    },
+    "دمياط": {
+      "temp": 25.7,
+      "rain": false
+    },
+    "كفر الشيخ": {
+      "temp": 26.6,
+      "rain": false
+    },
+    "الفيوم": {
+      "temp": 31.3,
+      "rain": false
+    },
+    "بني سويف": {
+      "temp": 31.4,
+      "rain": false
+    },
+    "المنيا": {
+      "temp": 31.2,
+      "rain": false
+    },
+    "أسيوط": {
+      "temp": 31.6,
+      "rain": false
+    },
+    "سوهاج": {
+      "temp": 32.2,
+      "rain": false
+    },
+    "قنا": {
+      "temp": 33.8,
+      "rain": false
+    },
+    "الأقصر": {
+      "temp": 33.8,
+      "rain": false
+    },
+    "أسوان": {
+      "temp": 35.7,
+      "rain": false
+    },
+    "البحر الأحمر": {
+      "temp": 29.6,
+      "rain": false
+    },
+    "الوادي الجديد": {
+      "temp": 32.1,
+      "rain": false
+    },
+    "مطروح_جنوب": {
+      "temp": 27.3,
+      "rain": false
+    },
+    "شمال سيناء": {
+      "temp": 27.6,
+      "rain": false
+    },
+    "جنوب سيناء": {
+      "temp": 31.3,
+      "rain": false
+    },
+    "الإسماعيلية": {
+      "temp": 31.6,
+      "rain": false
+    },
+    "السويس": {
+      "temp": 27.3,
+      "rain": false
+    },
+    "بورسعيد": {
+      "temp": 30.7,
+      "rain": false
+    }
+  },
   "events": [],
-  "sources": {}
+  "sources": {
+    "usd": {
+      "ok": true,
+      "rate": 52.8044,
+      "time": "2026-10-14T14:18:23.435Z"
+    },
+    "weather": {
+      "ok": true,
+      "count": 28
+    },
+    "cal": {
+      "ok": true,
+      "day": "الأربعاء",
+      "isHoliday": false
+    }
+  }
 }
