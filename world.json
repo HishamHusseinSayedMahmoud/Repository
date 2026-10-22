@@ -1,6 +1,6 @@
 {
-  "updatedAt": "2026-10-21T22:13:57.463Z",
-  "usdEgp": 54.4889,
+  "updatedAt": "2026-10-22T01:24:24.401Z",
+  "usdEgp": 54.3852,
   "weather": {
     "القاهرة": {
       "temp": 19.9,
@@ -119,12 +119,12 @@
   "sources": {
     "usd": {
       "ok": true,
-      "rate": 54.4889,
-      "time": "2026-10-21T22:13:57.620Z"
+      "rate": 54.3852,
+      "time": "2026-10-22T01:24:24.537Z"
     },
     "weather": {
-      "ok": true,
-      "count": 28
+      "ok": false,
+      "err": "Unexpected token 'U', \"Unexpected\"... is not valid JSON"
     },
     "cal": {
       "ok": true,
