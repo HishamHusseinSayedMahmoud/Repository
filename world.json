@@ -1,117 +1,117 @@
 {
-  "updatedAt": "2026-11-15T09:06:19.608Z",
+  "updatedAt": "2026-11-15T16:17:04.576Z",
   "usdEgp": 53.4393,
   "weather": {
     "القاهرة": {
-      "temp": 23.4,
-      "rain": false
-    },
-    "الجيزة": {
-      "temp": 23.3,
-      "rain": false
-    },
-    "القليوبية": {
-      "temp": 23.7,
-      "rain": false
-    },
-    "الإسكندرية": {
-      "temp": 23.6,
-      "rain": false
-    },
-    "البحيرة": {
-      "temp": 24.4,
-      "rain": false
-    },
-    "مطروح": {
-      "temp": 23.7,
-      "rain": false
-    },
-    "الدقهلية": {
-      "temp": 24.4,
-      "rain": false
-    },
-    "الشرقية": {
-      "temp": 23.7,
-      "rain": false
-    },
-    "الغربية": {
-      "temp": 23.9,
-      "rain": false
-    },
-    "المنوفية": {
-      "temp": 23.6,
-      "rain": false
-    },
-    "دمياط": {
-      "temp": 24.5,
-      "rain": false
-    },
-    "كفر الشيخ": {
-      "temp": 24.6,
-      "rain": false
-    },
-    "الفيوم": {
-      "temp": 24.7,
-      "rain": false
-    },
-    "بني سويف": {
-      "temp": 24.8,
-      "rain": false
-    },
-    "المنيا": {
-      "temp": 23.9,
-      "rain": false
-    },
-    "أسيوط": {
-      "temp": 25.4,
-      "rain": false
-    },
-    "سوهاج": {
-      "temp": 26.9,
-      "rain": false
-    },
-    "قنا": {
-      "temp": 26.1,
-      "rain": false
-    },
-    "الأقصر": {
-      "temp": 27.8,
-      "rain": false
-    },
-    "أسوان": {
-      "temp": 28.9,
-      "rain": false
-    },
-    "البحر الأحمر": {
-      "temp": 26.6,
-      "rain": false
-    },
-    "الوادي الجديد": {
-      "temp": 25.9,
-      "rain": false
-    },
-    "مطروح_جنوب": {
-      "temp": 23.9,
-      "rain": false
-    },
-    "شمال سيناء": {
-      "temp": 23.9,
-      "rain": false
-    },
-    "جنوب سيناء": {
-      "temp": 26.1,
-      "rain": false
-    },
-    "الإسماعيلية": {
       "temp": 24.2,
       "rain": false
     },
+    "الجيزة": {
+      "temp": 24.1,
+      "rain": false
+    },
+    "القليوبية": {
+      "temp": 22.7,
+      "rain": false
+    },
+    "الإسكندرية": {
+      "temp": 21,
+      "rain": false
+    },
+    "البحيرة": {
+      "temp": 21.3,
+      "rain": false
+    },
+    "مطروح": {
+      "temp": 21,
+      "rain": false
+    },
+    "الدقهلية": {
+      "temp": 21.5,
+      "rain": false
+    },
+    "الشرقية": {
+      "temp": 22.3,
+      "rain": false
+    },
+    "الغربية": {
+      "temp": 23.5,
+      "rain": false
+    },
+    "المنوفية": {
+      "temp": 22.8,
+      "rain": false
+    },
+    "دمياط": {
+      "temp": 20.3,
+      "rain": false
+    },
+    "كفر الشيخ": {
+      "temp": 21.4,
+      "rain": false
+    },
+    "الفيوم": {
+      "temp": 22.8,
+      "rain": false
+    },
+    "بني سويف": {
+      "temp": 23.4,
+      "rain": false
+    },
+    "المنيا": {
+      "temp": 22,
+      "rain": false
+    },
+    "أسيوط": {
+      "temp": 24.4,
+      "rain": false
+    },
+    "سوهاج": {
+      "temp": 24.4,
+      "rain": false
+    },
+    "قنا": {
+      "temp": 26.5,
+      "rain": false
+    },
+    "الأقصر": {
+      "temp": 25.8,
+      "rain": false
+    },
+    "أسوان": {
+      "temp": 27.7,
+      "rain": false
+    },
+    "البحر الأحمر": {
+      "temp": 24.9,
+      "rain": false
+    },
+    "الوادي الجديد": {
+      "temp": 25.6,
+      "rain": false
+    },
+    "مطروح_جنوب": {
+      "temp": 23.8,
+      "rain": false
+    },
+    "شمال سيناء": {
+      "temp": 22.3,
+      "rain": false
+    },
+    "جنوب سيناء": {
+      "temp": 25,
+      "rain": false
+    },
+    "الإسماعيلية": {
+      "temp": 21.9,
+      "rain": false
+    },
     "السويس": {
-      "temp": 23.9,
+      "temp": 23.8,
       "rain": false
     },
     "بورسعيد": {
-      "temp": 23.3,
+      "temp": 21.8,
       "rain": false
     }
   },
@@ -120,7 +120,7 @@
     "usd": {
       "ok": true,
       "rate": 53.4393,
-      "time": "2026-11-15T09:06:19.737Z"
+      "time": "2026-11-15T16:17:04.702Z"
     },
     "weather": {
       "ok": true,
