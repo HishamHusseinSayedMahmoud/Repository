@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-15T16:17:04.576Z",
+  "updatedAt": "2026-11-15T21:37:28.206Z",
   "usdEgp": 53.4393,
   "weather": {
     "القاهرة": {
@@ -120,11 +120,11 @@
     "usd": {
       "ok": true,
       "rate": 53.4393,
-      "time": "2026-11-15T16:17:04.702Z"
+      "time": "2026-11-15T21:37:28.274Z"
     },
     "weather": {
-      "ok": true,
-      "count": 28
+      "ok": false,
+      "err": "HTTP 429"
     },
     "cal": {
       "ok": true,
