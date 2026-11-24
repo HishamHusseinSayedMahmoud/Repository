@@ -1,6 +1,6 @@
 {
-  "updatedAt": "2026-11-23T21:07:57.888Z",
-  "usdEgp": 54.1666,
+  "updatedAt": "2026-11-24T05:51:35.699Z",
+  "usdEgp": 54.3309,
   "weather": {
     "القاهرة": {
       "temp": 17,
@@ -119,16 +119,16 @@
   "sources": {
     "usd": {
       "ok": true,
-      "rate": 54.1666,
-      "time": "2026-11-23T21:07:58.460Z"
+      "rate": 54.3309,
+      "time": "2026-11-24T05:51:35.895Z"
     },
     "weather": {
-      "ok": true,
-      "count": 28
+      "ok": false,
+      "err": "fetch failed"
     },
     "cal": {
       "ok": true,
-      "day": "الاثنين",
+      "day": "الثلاثاء",
       "isHoliday": false
     }
   }
