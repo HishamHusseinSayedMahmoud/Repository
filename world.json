@@ -1,29 +1,29 @@
 {
-  "updatedAt": "2026-11-25T22:19:56.217Z",
+  "updatedAt": "2026-11-26T04:51:31.224Z",
   "usdEgp": 54.2259,
   "weather": {
     "القاهرة": {
-      "temp": 15.6,
+      "temp": 13.7,
       "rain": false
     },
     "الجيزة": {
-      "temp": 15.5,
+      "temp": 13.7,
       "rain": false
     },
     "القليوبية": {
-      "temp": 14.2,
+      "temp": 13.2,
       "rain": false
     },
     "الإسكندرية": {
-      "temp": 17.4,
+      "temp": 14.4,
       "rain": false
     },
     "البحيرة": {
-      "temp": 12.6,
+      "temp": 12.4,
       "rain": false
     },
     "مطروح": {
-      "temp": 17.1,
+      "temp": 16.7,
       "rain": false
     },
     "الدقهلية": {
@@ -31,15 +31,15 @@
       "rain": false
     },
     "الشرقية": {
-      "temp": 14.2,
-      "rain": false
-    },
-    "الغربية": {
       "temp": 13,
       "rain": false
     },
+    "الغربية": {
+      "temp": 12.4,
+      "rain": false
+    },
     "المنوفية": {
-      "temp": 13.4,
+      "temp": 12,
       "rain": false
     },
     "دمياط": {
@@ -47,71 +47,71 @@
       "rain": false
     },
     "كفر الشيخ": {
-      "temp": 12.8,
+      "temp": 12.4,
       "rain": false
     },
     "الفيوم": {
-      "temp": 15.8,
+      "temp": 13.7,
       "rain": false
     },
     "بني سويف": {
-      "temp": 16.2,
+      "temp": 13.1,
       "rain": false
     },
     "المنيا": {
-      "temp": 14.8,
+      "temp": 12.5,
       "rain": false
     },
     "أسيوط": {
-      "temp": 16.6,
+      "temp": 13.2,
       "rain": false
     },
     "سوهاج": {
-      "temp": 17.7,
+      "temp": 14,
       "rain": false
     },
     "قنا": {
-      "temp": 19.3,
+      "temp": 15.8,
       "rain": false
     },
     "الأقصر": {
-      "temp": 19.9,
+      "temp": 16.2,
       "rain": false
     },
     "أسوان": {
-      "temp": 22.6,
+      "temp": 18.3,
       "rain": false
     },
     "البحر الأحمر": {
-      "temp": 21.3,
+      "temp": 19.6,
       "rain": false
     },
     "الوادي الجديد": {
-      "temp": 19.5,
+      "temp": 16.5,
       "rain": false
     },
     "مطروح_جنوب": {
-      "temp": 17.5,
+      "temp": 16.4,
       "rain": false
     },
     "شمال سيناء": {
-      "temp": 17.8,
+      "temp": 16,
       "rain": false
     },
     "جنوب سيناء": {
-      "temp": 21.4,
+      "temp": 19.5,
       "rain": false
     },
     "الإسماعيلية": {
-      "temp": 17.4,
+      "temp": 15.3,
       "rain": false
     },
     "السويس": {
-      "temp": 17.5,
+      "temp": 16.4,
       "rain": false
     },
     "بورسعيد": {
-      "temp": 19.3,
+      "temp": 19.5,
       "rain": false
     }
   },
@@ -120,7 +120,7 @@
     "usd": {
       "ok": true,
       "rate": 54.2259,
-      "time": "2026-11-25T22:19:56.298Z"
+      "time": "2026-11-26T04:51:31.355Z"
     },
     "weather": {
       "ok": true,
